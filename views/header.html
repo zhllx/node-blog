@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> Blog </title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.css">
+    <!--[if lt IE 9]>
+      <script src="/javascripts/html5shiv.min.js"></script>
+      <script src="/javascripts/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <header class="col-md-offset-2">
+        <h1><%= title %></h1>
+    </header>
+    <nav class="navbar navbar-default col-md-2" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">zh的blog</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse" id="example-navbar-collapse">
+            <ul class="nav navbar-nav ">
+                <li><a href="/" title="主页">主页</a></li>
+                <li><a href="/login" title="登录">登录</a></li>
+                <li><a href="/reg" title="注册">注册</a></li>
+            </ul>
+        </div>
+    </nav>
+    <article class="col-md-10">
