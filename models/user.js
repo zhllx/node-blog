@@ -40,7 +40,7 @@ User.prototype.save = function(callback) {
 };
 User.get = function(name, callback) {
     userModel.findOne({ name: name }, function(err, user) {
-        console.log('-----1----------');
+        console.log('-----1----------'+ name);
         if (err) {
             console.log('-----2----------'+ err);
             return callback(err);
