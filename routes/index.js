@@ -2,15 +2,23 @@ var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
 var User = require('../models/user.js');
+var Post = require('../models/post.js');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('index', {
-        title: '主页',
-        user: req.session.user,
-        success: req.flash('success').toString(),
-        error: req.flash('error').toString()
-    });
+    Post.get(null, function(err, posts) {
+        if (err) {
+            posts = [];
+        }
+        // console.log(posts);
+        res.render('index', {
+            title: '主页',
+            user: req.session.user,
+            posts: posts,
+            success: req.flash('success').toString(),
+            error: req.flash('error').toString()
+        });
+    })
 });
 // router.get('/login', function(req, res, next) {
 //     res.render('login', { title: '登录' });
@@ -31,10 +39,7 @@ router.post('/login', function(req, res) {
     // var md5 = crypto.createHash('md5');
     // var password = md5.update(req.body.password).digest('hex');
     //检测用户是否存在
-    console.log(req.body.name + '---------1---')
     User.get(req.body.name, function(err, user) {
-        console.log(req.body.name + '---------2---')
-        console.log(user + '---------1---')
         if (!user) {
             req.flash('error', '用户不存在1');
             return res.redirect('/login'); //用户不存在则跳转到登录也
@@ -83,30 +88,23 @@ router.post('/reg', function(req, res) {
     });
     //检测用户名是否存在
     User.get(req.body.name, function(err, user) {
-        console.log('-----9----------');
         if (err) {
             console.log(err);
             req.flash('error', err);
             return res.redirect('/');
         }
         if (user) {
-
-            console.log('9999999用户已经存在' + '----' + err + '---' + user);
             req.flash('error', '用户名已经存在');
             return res.redirect('/reg');
         }
         //如果不存在，则新增用户
         newUser.save(function(err, user) {
-            console.log('-----10----------');
             if (err) {
-                console.log('-----11----------');
                 console.log(err);
                 req.flash('error', err);
                 return res.redirect('/reg'); //注册失败返回注册页
             }
-            console.log('-----1----------2---' + user);
             req.session.user = user; //用户信息存入 session
-            console.log('-----12----------');
             console.log('注册成功！');
             req.flash('success', '注册成功！');
             res.redirect('/');
@@ -136,7 +134,16 @@ router.get('/post', function(req, res) {
 });
 router.post('/post', checkLogin);
 router.post('/post', function(req, res) {
-    // body...
+    var currentUser = req.session.user;
+    var post = new Post(currentUser.name, req.body.title, req.body.post);
+    post.save(function(err) {
+        if (err) {
+            req.flash('error', err);
+            return res.redirect('/');
+        }
+        req.flash('success', '发布成功');
+        res.redirect('/');
+    });
 });
 //使用路由中间件，对页面权限控制。
 // 如果当前中间件没有终结请求-响应循环，则必须调用 next() 方法将控制权交给下一个中间件，
@@ -150,7 +157,7 @@ function checkLogin(req, res, next) {
     next();
 }
 
-function checkNotLogin(req,res,next) {
+function checkNotLogin(req, res, next) {
     if (req.session.user) {
         req.flash('error', '已登录');
         res.redirect('back'); //返回之前登录页面

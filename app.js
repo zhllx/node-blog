@@ -33,7 +33,7 @@ app.use(session({
     key: settings.db, //cookie 名字
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 24 * 30 }, //30 days
     resave: false,
-  saveUninitialized: true,
+    saveUninitialized: true,
     store: new MongoStore({
         // db: settings.db,
         // host: settings.host,

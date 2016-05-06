@@ -6,10 +6,23 @@
 a {
   color: #00B7FF;
 }*/
-header{
-	padding-left: .5em 0;
-	border-bottom: 1px solid #ccc;
+
+header {
+    padding-left: .5em 0;
+    border-bottom: 1px solid #ccc;
 }
-article{
-	padding-top: .5em;
+
+article {
+    padding-top: .5em;
 }
+
+
+.content {
+    text-indent: 2em;
+    max-height: 115px;
+    background-color: #928D8E;
+    width: 100%;
+    overflow: hidden;
+}
+
+
