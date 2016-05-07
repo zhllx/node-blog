@@ -40,14 +40,10 @@ User.prototype.save = function(callback) {
 };
 User.get = function(name, callback) {
     userModel.findOne({ name: name }, function(err, user) {
-        console.log('-----1----------'+ name);
         if (err) {
-            console.log('-----2----------'+ err);
             return callback(err);
         }
-        console.log( '22222222222用户已经存在'+'----'+err+'---'+user);
-        console.log('-----3----------');
-        callback(null, user)
+        callback(null, user);
          
     })
 

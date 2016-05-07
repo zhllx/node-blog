@@ -18,11 +18,24 @@
     "mongodb": "^2.1.16",
     "mongoose": "^4.4.13",
     "morgan": "~1.6.1",
+    "multer": "0.1.6",
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
     "browser-sync": "^2.12.3",
     "gulp": "^3.9.1",
     "gulp-nodemon": "^2.0.6"
-  }
+  },
+  "description": "用pm2 start blogstart.json 启动",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhllx/node-blog.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhllx/node-blog/issues"
+  },
+  "homepage": "https://github.com/zhllx/node-blog#readme"
 }

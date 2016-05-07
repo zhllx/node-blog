@@ -16,6 +16,11 @@ var flash = require('connect-flash');
 //使用express-session connect-mongo 模块实现会话信息存储到moogoDB
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
+
+//增加文件上传功能
+var multer = require('multer');
+
+
 var app = express();
 //注册hmtl模板引擎
 
@@ -41,6 +46,12 @@ app.use(session({
         url: 'mongodb://localhost/blog'
     })
 }));
+app.use(multer({
+  dest: './public/upload',
+  rename: function (fieldname, filename) {
+    return filename+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10);
+  }
+}));
 app.use(flash());
 
 app.use(logger('dev'));
@@ -51,7 +62,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
-//实现会话信息存储到moogoDB
+//文件上传
+// app.use(multer({
+//     dest:'./public/images',//上传文件所在目录
+//     //rename 函数用来修改上传后文件名，这里不修改
+//     rename:function(fieldname,filename){
+//         return filename;
+//     }
+// }));
 
 
 // catch 404 and forward to error handler
