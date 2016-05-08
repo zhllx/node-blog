@@ -20,7 +20,11 @@
     </header>
     <nav class="navbar navbar-default col-md-2" role="navigation">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">zh的blog</a>
+            <% if(!user){ %>
+            <a class="navbar-brand" href="#">blog</a>
+             <% }else{ %>
+             <a class="navbar-brand" href="#"><%=user.name %>的blog</a>
+             <% } %>
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
                 <span class="sr-only">切换导航</span>
                 <span class="icon-bar"></span>
