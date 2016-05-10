@@ -24,7 +24,8 @@ Post.prototype.save = function(callback) {
         name: this.name,
         time: this.time,
         title: this.title,
-        post: this.post
+        post: this.post,
+        comments: [] //用来存储留言功能
     }
 
     //打开数据库
@@ -53,40 +54,40 @@ Post.prototype.save = function(callback) {
 
 //读取文章
 Post.get = function(name, callback) {
-        //打开数据库
-        mongodb.open(function(err, db) {
+    //打开数据库
+    mongodb.open(function(err, db) {
+        if (err) {
+            return callback(err);
+        }
+        db.collection('posts', function(err, collection) {
             if (err) {
+                mongodb.close();
                 return callback(err);
             }
-            db.collection('posts', function(err, collection) {
+            var query = {};
+            if (name) {
+                query.name = name;
+            }
+            //根据query 对象查询文章
+            collection.find(query).sort({
+                time: -1
+            }).toArray(function(err, docs) {
+                mongodb.close();
                 if (err) {
-                    mongodb.close();
+
                     return callback(err);
                 }
-                var query = {};
-                if (name) {
-                    query.name = name;
-                }
-                //根据query 对象查询文章
-                collection.find(query).sort({
-                    time: -1
-                }).toArray(function(err, docs) {
-                    mongodb.close();
-                    if (err) {
-
-                        return callback(err);
-                    }
-                    //markdown 格式
-                    docs.forEach(function(doc) {
-                        doc.post = markdown.toHTML(doc.post);
-                    })
-                    callback(null, docs);
-                });
-
+                //markdown 格式
+                docs.forEach(function(doc) {
+                    doc.post = markdown.toHTML(doc.post);
+                })
+                callback(null, docs);
             });
-        })
-    }
-    //根据用户名，发布日期以及文章名精确获取一篇文章
+
+        });
+    })
+};
+//根据用户名，发布日期以及文章名精确获取一篇文章
 Post.getOne = function(name, day, title, callback) {
     mongodb.open(function(err, db) {
         if (err) {
@@ -107,7 +108,12 @@ Post.getOne = function(name, day, title, callback) {
                     return callback(err);
                 }
                 //解析markdown 为HTML
-                doc.post = markdown.toHTML(doc.post);
+                if (doc) {
+                    doc.post = markdown.toHTML(doc.post);
+                    doc.comments.forEach(function(comment) {
+                        comment.content = markdown.toHTML(comment.content);
+                    })
+                }
                 callback(null, doc);
             });
         })
