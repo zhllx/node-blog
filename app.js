@@ -105,6 +105,6 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
+require('events').EventEmitter.defaultMaxListeners = Infinity;
 
 module.exports = app;

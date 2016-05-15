@@ -8,7 +8,8 @@ var userScheMa = new Schema({
 
 }, {
     collection: 'users'
-}); //  定义了一个新的模型，但是此模式还未和users集合有关联
+}); 
+// 定义了一个新的模型，但是此模式还未和users集合有关联
 var userModel = mongoose.model('users', userScheMa); //  与users集合关联
 
 function User(user) {
@@ -18,7 +19,6 @@ function User(user) {
 };
 //存储用户信息
 User.prototype.save = function(callback) {
-    console.log('-----4----------');
     //要存入的数据库的用户文档
     var user = {
         name: this.name,
@@ -27,13 +27,9 @@ User.prototype.save = function(callback) {
     };
     var newUser = new userModel(user);
     newUser.save(function(err, user) {
-        console.log('-----5----------');
         if (err) {
-            console.log('-----6----------'+ err);
             return callback(err);
         }
-        console.log('-----7----------');
-        console.log( '777777777存在'+'----'+err+'---'+user);
         callback(null, user)
     });
 

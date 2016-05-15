@@ -8,6 +8,8 @@
     <title> Blog </title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.css">
+    <script type="text/javascript" src='javascripts/jquery-2.2.2.js'></script>
+    <script type="text/javascript" src='javascripts/bootstrap.js'></script>
     <!--[if lt IE 9]>
       <script src="/javascripts/html5shiv.min.js"></script>
       <script src="/javascripts/respond.min.js"></script>
@@ -15,29 +17,32 @@
 </head>
 
 <body>
-    <header >
+    <header>
         <h1 class="col-md-offset-2"><%= title %></h1>
     </header>
     <nav class="navbar navbar-default col-md-2" role="navigation">
         <div class="navbar-header">
             <% if(!user){ %>
-            <a class="navbar-brand" href="#">blog</a>
-             <% }else{ %>
-             <a class="navbar-brand" href="#"><%=user.name %>的blog</a>
-             <% } %>
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
-                <span class="sr-only">切换导航</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+                <a class="navbar-brand" href="#">blog</a>
+                <% }else{ %>
+                    <a class="navbar-brand" href="#">
+                        <%=user.name %>的blog</a>
+                    <% } %>
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+                            <span class="sr-only">切换导航</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
         </div>
         <div class="collapse navbar-collapse" id="example-navbar-collapse">
             <ul class="nav navbar-nav ">
                 <li><a href="/" title="主页">主页</a></li>
+                <li><a href="/archive" title="存档">存档</a></li>
                 <% if(user) { %>
-                     <li><a href="/upload" title="上传">上传</a></li>
+                    <li><a href="/upload" title="上传">上传</a></li>
                     <li><a href="/post" title="发表">发表</a></li>
+                    <li><a href="/creeper" title="发表">爬虫</a></li>
                     <li><a href="/logout" title="退出">退出</a></li>
                     <% } else { %>
                         <li><a href="/login" title="登录">登录</a></li>

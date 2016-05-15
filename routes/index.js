@@ -4,13 +4,14 @@ var crypto = require('crypto');
 var User = require('../models/user.js');
 var Post = require('../models/post.js');
 var Comment = require('../models/comment.js');
-
-// var multer  = require('multer')
-// var upload = multer({ dest: './public/images' })
-// var testController=require('../conf/testController.js');
+var Creeper = require('../conf/creeper.js');
+var cheerio = require("cheerio");
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    Post.get(null, function(err, posts) {
+    //判断是否是第一页，并把请求的页数转换成number 类型
+    var page = req.query.p ? parseInt(req.query.p) : 1;
+    //查询并返回第page页的10篇文章
+    Post.get(null, page, function(err, posts, total) {
         if (err) {
             posts = [];
         }
@@ -19,6 +20,9 @@ router.get('/', function(req, res, next) {
             title: '主页',
             user: req.session.user,
             posts: posts,
+            page: page,
+            isFirstPage: (page - 1) == 0,
+            isLastPage: ((page - 1) * 10 + posts.length) == total,
             success: req.flash('success').toString(),
             error: req.flash('error').toString()
         });
@@ -74,10 +78,10 @@ router.post('/reg', function(req, res) {
     var name = req.body.name;
     var password = req.body.password;
     var password_re = req.body['password-repeat'];
-    console.log(req.session.user);
+    // console.log(req.session.user);
     //检查用户密码是否输入对了
+
     if (password_re != password) {
-        console.log('两次输入的密码不一样');
         req.flash('error', '两次输入的密码不一样');
         return res.redirect('/reg'); //重新加载注册页
     }
@@ -92,7 +96,7 @@ router.post('/reg', function(req, res) {
     //检测用户名是否存在
     User.get(req.body.name, function(err, user) {
         if (err) {
-            console.log(err);
+            // console.log(err);
             req.flash('error', err);
             return res.redirect('/');
         }
@@ -160,19 +164,19 @@ router.get('/upload', function(req, res) {
 });
 // router.post('/upload',checkNotLogin);
 router.post('/upload', function(req, res) {
-        console.log('meiyou zhixx');
         req.flash('success', '上传成功');
         res.redirect('/upload');
     })
     //个人主页
 router.get('/u/:name', function(req, res) {
+    var page = req.query.p ? parseInt(req.query.p) : 1;
     //检查用户名是否存在
     User.get(req.params.name, function(err, user) {
         if (!user) {
             req.flash('error', '用户不存在');
             return res.redirect('/');
         }
-        Post.get(user.name, function(err, posts) {
+        Post.get(user.name, page, function(err, posts) {
             if (err) {
                 req.flash('error', err);
                 return res.redirect('/');
@@ -181,6 +185,8 @@ router.get('/u/:name', function(req, res) {
                 title: user.name,
                 posts: posts,
                 user: req.session.user,
+                isFirstPage: (page - 1) == 0,
+                isLastPage: ((page - 1) * 10 + posts.length) == total,
                 success: req.flash('success').toString(),
                 error: req.flash('error').toString()
             })
@@ -279,7 +285,90 @@ router.get('/remove/:name/:day/:title', function(req, res) {
         res.redirect('/');
     })
 });
+//archive 存档路由
+router.get('/archive', function(req, res) {
+    Post.archive(function(err, posts) {
+        if (err) {
+            req.flash('error', err);
+            return res.redirect('/');
+        }
+        // console.log(posts);
+        res.render('archive', {
+            title: "存档",
+            posts: posts,
+            user: req.session.user,
+            success: req.flash('success').toString(),
+            error: req.flash('error').toString()
+        })
+    })
+})
+router.get('/creeper', checkLogin);
+router.get('/creeper', function(req, res) {
+    res.render('creeper', {
+        title: '发表Blog',
+        user: req.session.user,
+        success: req.flash('success').toString(),
+        error: req.flash('error').toString()
+    });
+});
 
+router.post('/creeper', checkLogin);
+router.post('/creeper', function(req, res) {
+
+    var currentUser = req.session.user;
+    // var url = 'http://www.cnblogs.com/cate/108703/';
+    var page = req.body.page;
+    var content = req.body.content;
+    var arr = [];
+    var add = [];
+    var x = 0;
+    var a = 0;
+
+    var url = 'http://www.cnblogs.com/cate/108703/' + page;
+    console.log(url)
+    var cre = new Creeper(url);
+    cre.get(function(html) {
+        var $ = cheerio.load(html);
+        var list = $('.titlelnk');
+        list.each(function(index, el) {
+            arr[index] = {};
+            arr[index].hd = $(el).text();
+            arr[index].link = $(el).attr('href');
+        });
+
+        // console.log(add)
+        //用迭代的方法进行回调
+        function diedai() {
+            if (x > arr.length - 1) {
+                return res.redirect('/');
+            };
+            // console.log(arr[x].link);
+            var post = new Post(currentUser.name, arr[x].hd, arr[x].link + "/n" + add[x]);
+            post.save(function(err) {
+                x++;
+                diedai();
+            });
+
+        };
+        diedai();
+
+        console.log(arr);
+
+    });
+
+    for (var i = 0; i < arr.length; i++) {
+        // console.log(arr[i]);
+        var creep = [];
+        creep[i] = new Creeper(arr[i].link);
+        creep[i].get(function(html) {
+            var $ = cheerio.load(html);
+            // console.log($('#cnblogs_post_body').text())
+            add.push($('#cnblogs_post_body').text());
+            // console.log(add.length)
+        })
+    };
+
+});
 //使用路由中间件，对页面权限控制。
 // 如果当前中间件没有终结请求-响应循环，则必须调用 next() 方法将控制权交给下一个中间件，
 // 否则请求就会挂起。中间件一般不直接对客户端进行响应，而是对请求进行一些预处理，再传递下去；
