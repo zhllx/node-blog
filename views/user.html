@@ -13,6 +13,13 @@
                 <%= post.name %>
             </a> | 日期：
             <%= post.time.minute %>
+            标签：
+            <% post.tags.forEach(function(tag,index){%>
+            <% if(tag){%>
+            <a class="tag" href="/tags/<%= tag %>"><%= tag %></a>
+            <% }%>
+
+            <% })%>
         </p>
         <p class="content">
             <%- post.post%>

@@ -5,7 +5,10 @@ var User = require('../models/user.js');
 var Post = require('../models/post.js');
 var Comment = require('../models/comment.js');
 var Creeper = require('../conf/creeper.js');
+
+// var http = require('http');
 var cheerio = require("cheerio");
+var superagent = require('superagent');
 /* GET home page. */
 router.get('/', function(req, res, next) {
     //判断是否是第一页，并把请求的页数转换成number 类型
@@ -142,7 +145,8 @@ router.get('/post', function(req, res) {
 router.post('/post', checkLogin);
 router.post('/post', function(req, res) {
     var currentUser = req.session.user;
-    var post = new Post(currentUser.name, req.body.title, req.body.post);
+    var tags = [req.body.tag1, req.body.tag2, req.body.tag3];
+    var post = new Post(currentUser.name, req.body.title, tags, req.body.post);
     post.save(function(err) {
         if (err) {
             req.flash('error', err);
@@ -324,49 +328,97 @@ router.post('/creeper', function(req, res) {
     var x = 0;
     var a = 0;
 
+
     var url = 'http://www.cnblogs.com/cate/108703/' + page;
     console.log(url)
-    var cre = new Creeper(url);
-    cre.get(function(html) {
-        var $ = cheerio.load(html);
-        var list = $('.titlelnk');
-        list.each(function(index, el) {
-            arr[index] = {};
-            arr[index].hd = $(el).text();
-            arr[index].link = $(el).attr('href');
-        });
+    superagent.get(url).end(function(err, sers) {
+        var $ = cheerio.load(sers.text);
+        var title = $('.titlelnk');
+        var bool = true;
+        title.each(function(index, titlelnk) {
+            superagent.get($(titlelnk).attr('href')).end(function(err, sers) {
+                var $ = cheerio.load(sers.text);
+                var content = $('#cnblogs_post_body').text();
+                add[index] = {};
+                add[index].head = $(titlelnk).text();
+                add[index].content = $('#cnblogs_post_body').text();
+                add[index].link = $(titlelnk).attr('href');
+                arr.push(index);
+                // console.log($(titlelnk).text());
+                if (arr.length == title.length) {
+                    var post = [];
+                    post[0] = new Post(currentUser.name, add[0].head, ["转载", "--", add[0].link], add[0].content);
+                    post[0].save(function(err) {
+                        post[1] = new Post(currentUser.name, add[1].head, ["转载", "--", add[1].link], add[1].content);
+                        post[1].save(function(err) {
+                            post[2] = new Post(currentUser.name, add[2].head, ["转载", "--", add[2].link], add[2].content);
+                            post[2].save(function(err) {
+                                post[3] = new Post(currentUser.name, add[3].head, ["转载", "--", add[3].link], add[3].content);
+                                post[3].save(function(err) {
+                                    post[4] = new Post(currentUser.name, add[4].head, ["转载", "--", add[4].link], add[4].content);
+                                    post[4].save(function(err) {
+                                        post[5] = new Post(currentUser.name, add[5].head, ["转载", "--", add[5].link], add[5].content);
+                                        post[5].save(function(err) {
+                                            post[6] = new Post(currentUser.name, add[6].head, ["转载", "--", add[6].link], add[6].content);
+                                            post[6].save(function(err) {
+                                                post[7] = new Post(currentUser.name, add[7].head, ["转载", "--", add[7].link], add[7].content);
+                                                post[7].save(function(err) {
+                                                    post[8] = new Post(currentUser.name, add[8].head, ["转载", "--", add[8].link], add[8].content);
+                                                    post[8].save(function(err) {
+                                                        post[9] = new Post(currentUser.name, add[9].head, ["转载", "--", add[9].link], add[9].content);
 
-        // console.log(add)
-        //用迭代的方法进行回调
-        function diedai() {
-            if (x > arr.length - 1) {
-                return res.redirect('/');
-            };
-            // console.log(arr[x].link);
-            var post = new Post(currentUser.name, arr[x].hd, arr[x].link + "/n" + add[x]);
-            post.save(function(err) {
-                x++;
-                diedai();
-            });
+                                                        post[9].save(function(err) {
+                                                            post[10] = new Post(currentUser.name, add[10].head, ["转载", "--", add[10].link], add[10].content);
 
-        };
-        diedai();
+                                                            post[10].save(function(err) {
+                                                                post[11] = new Post(currentUser.name, add[11].head, ["转载", "--", add[11].link], add[11].content);
 
-        console.log(arr);
+                                                                post[11].save(function(err) {
+                                                                    post[12] = new Post(currentUser.name, add[12].head, ["转载", "--", add[12].link], add[12].content);
 
-    });
+                                                                    post[12].save(function(err) {
+                                                                        post[13] = new Post(currentUser.name, add[13].head, ["转载", "--", add[13].link], add[13].content);
 
-    for (var i = 0; i < arr.length; i++) {
-        // console.log(arr[i]);
-        var creep = [];
-        creep[i] = new Creeper(arr[i].link);
-        creep[i].get(function(html) {
-            var $ = cheerio.load(html);
-            // console.log($('#cnblogs_post_body').text())
-            add.push($('#cnblogs_post_body').text());
-            // console.log(add.length)
+                                                                        post[13].save(function(err) {
+                                                                            post[14] = new Post(currentUser.name, add[14].head, ["转载", "--", add[14].link], add[14].content);
+
+                                                                            post[14].save(function(err) {
+                                                                                post[15] = new Post(currentUser.name, add[15].head, ["转载", "--", add[15].link], add[15].content);
+
+                                                                                post[15].save(function(err) {
+                                                                                    post[16] = new Post(currentUser.name, add[16].head, ["转载", "--", add[16].link], add[16].content);
+
+                                                                                    post[16].save(function(err) {
+                                                                                        return res.redirect('/archive');
+                                                                                    });
+
+                                                                                });
+
+                                                                            });
+                                                                        });
+
+                                                                    });
+
+                                                                });
+
+                                                            });
+
+                                                        });
+
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }
+
+            })
         })
-    };
+    })
 
 });
 //使用路由中间件，对页面权限控制。
@@ -388,4 +440,5 @@ function checkNotLogin(req, res, next) {
     }
     next();
 }
+
 module.exports = router;

@@ -1,11 +1,13 @@
 var mongodb = require('./db');
 var markdown = require('markdown').markdown;
 
-function Post(name, title, post) {
+function Post(name, title, tags,post) {
+    
     this.name = name;
     this.title = title;
     this.post = post;
     this.time = {};
+    this.tags = tags;
 }
 module.exports = Post;
 
@@ -24,6 +26,7 @@ Post.prototype.save = function(callback) {
         name: this.name,
         time: this.time,
         title: this.title,
+        tags:this.tags,
         post: this.post,
         comments: [] //用来存储留言功能
     }
