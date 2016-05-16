@@ -16,13 +16,14 @@
             标签：
             <% post.tags.forEach(function(tag,index){%>
             <% if(tag){%>
-            <a class="tag" href="/tags/<%= tag %>"><%= tag %></a>
+            <a class="tag" href="<%= tag %>"><%= tag %></a>
             <% }%>
 
             <% })%>
         </p>
         <p class="content">
             <%- post.post %>
+            <p class="info">阅读:<%= post.pv %> | 评论：<%= post.comments.length %></p>
         </p>
         <% }) %>
             <%- include paging.html %>

@@ -180,7 +180,7 @@ router.get('/u/:name', function(req, res) {
             req.flash('error', '用户不存在');
             return res.redirect('/');
         }
-        Post.get(user.name, page, function(err, posts) {
+        Post.get(user.name, page, function(err, posts,total) {
             if (err) {
                 req.flash('error', err);
                 return res.redirect('/');
@@ -309,7 +309,7 @@ router.get('/archive', function(req, res) {
 router.get('/creeper', checkLogin);
 router.get('/creeper', function(req, res) {
     res.render('creeper', {
-        title: '发表Blog',
+        title: '爬虫',
         user: req.session.user,
         success: req.flash('success').toString(),
         error: req.flash('error').toString()

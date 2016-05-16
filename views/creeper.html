@@ -1,15 +1,15 @@
 <%- include header.html %>
 <form method="post" class="col-md-3">
 	爬取目标网站网址：<br/>
-	<input type="text" name="url"><br/>
+	<input type="text" name="url" readonly="readonly" placeholder="目前不支持网址输入"><br/>
 	爬取页数:<br/>
 	<input type="text" name="page"><br/>
 	爬取目标内容id/class:<br/>
-	<input type="text" name="content"><br/>
+	<input type="text" name="content" readonly="readonly" placeholder="暂时不支持"><br/>
 	<input type="submit" value="发表">
 </form>
-<div class="colmd-8">
-	
+<div class="col-md-6">
+	<em>爬取的是博客园：'http://www.cnblogs.com/cate/108703/' + page</em>
 </div>
 
 <script type="text/javascript">

@@ -20,7 +20,7 @@
     <header>
         <h1 class="col-md-offset-2"><%= title %></h1>
     </header>
-    <nav class="navbar navbar-default col-md-2" role="navigation">
+    <nav class="navbar navbar-default col-md-2 fixed" role="navigation">
         <div class="navbar-header">
             <% if(!user){ %>
                 <a class="navbar-brand" href="#">blog</a>
@@ -50,8 +50,9 @@
                         <% } %>
             </ul>
         </div>
+        <!-- <form action="/seatch" method="GET"><input type="text" name="keyword" placeholder="search"></form> -->
     </nav>
-    <article class="col-md-10">
+    <article class="col-md-10 col-md-offset-2">
         <% if(success) {%>
             <!-- <div>
                 <%= success %>

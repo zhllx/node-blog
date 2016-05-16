@@ -1,8 +1,8 @@
 var mongodb = require('./db');
 var markdown = require('markdown').markdown;
 
-function Post(name, title, tags,post) {
-    
+function Post(name, title, tags, post) {
+
     this.name = name;
     this.title = title;
     this.post = post;
@@ -26,8 +26,9 @@ Post.prototype.save = function(callback) {
         name: this.name,
         time: this.time,
         title: this.title,
-        tags:this.tags,
+        tags: this.tags,
         post: this.post,
+        pv: 0,
         comments: [] //用来存储留言功能
     }
 
@@ -56,7 +57,7 @@ Post.prototype.save = function(callback) {
 };
 
 //读取文章
-Post.get = function(name,page,callback) {
+Post.get = function(name, page, callback) {
     //打开数据库
     mongodb.open(function(err, db) {
         if (err) {
@@ -90,9 +91,9 @@ Post.get = function(name,page,callback) {
             //使用 count 返回特定查询的文档数 total
             collection.count(query, function(err, total) {
                 //根据 query对象查询，并跳过前（page-1）*10个结果，返回之后的10个结果
-                collection.find(query,{
-                    skip:(page - 1),
-                    limit:10
+                collection.find(query, {
+                    skip: (page - 1),
+                    limit: 10
                 }).sort({
                     time: -1
                 }).toArray(function(err, docs) {
@@ -106,7 +107,7 @@ Post.get = function(name,page,callback) {
                         doc.post = markdown.toHTML(doc.post);
                         // console.log(index);
                     })
-                    callback(null, docs,total);
+                    callback(null, docs, total);
                 });
             })
 
@@ -129,6 +130,13 @@ Post.getOne = function(name, day, title, callback) {
                 'time.day': day,
                 'title': title
             }, function(err, doc) {
+                if (doc) {
+                    collection.update({
+                        'name': name,
+                        'time.day': day,
+                        'title': title
+                    }, { "$inc": { "pv": 1 } });
+                }
                 mongodb.close();
                 if (err) {
                     return callback(err);
@@ -229,29 +237,29 @@ Post.remove = function(name, day, title, callback) {
     })
 };
 //返回所有文章存档信息
-Post.archive = function (callback) {
+Post.archive = function(callback) {
 
-    mongodb.open(function (err, db) {
-        if (err){
+    mongodb.open(function(err, db) {
+        if (err) {
             return callback(err);
         }
 
-        db.collection('posts', function (err, collection) {
-           if (err){
-               mongodb.close();
-               return callback(err);
-           }
+        db.collection('posts', function(err, collection) {
+            if (err) {
+                mongodb.close();
+                return callback(err);
+            }
 
             //返回只包含 name、time、title 属性的文档组成的存档数组
-            collection.find({},{
+            collection.find({}, {
                 name: 1,
                 time: 1,
                 title: 1
-            },{
-                sort: {time: -1}
-            }).toArray(function (err, docs) {
+            }, {
+                sort: { time: -1 }
+            }).toArray(function(err, docs) {
                 mongodb.close();
-                if (err){
+                if (err) {
                     return callback(err);
                 }
 
